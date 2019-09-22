@@ -1,0 +1,39 @@
+{
+  "name": "tailwindcss-font-inter",
+  "description": "TailwindCSS Plugin to integrate with Inter Typeface.",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "src/index.js",
+  "author": "Yuri Sementsov <hello@smcv.dev>",
+  "scripts": {
+    "dev": "parcel serve demo/index.html --open",
+    "update": "node ./update.js",
+    "build": "parcel build demo/index.html",
+    "test": "echo Success"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/semencov/tailwindcss-font-inter.git"
+  },
+  "keywords": [
+    "tailwindcss",
+    "tailwindcss-plugin",
+    "tailwind-plugin",
+    "inter ui",
+    "inter",
+    "font",
+    "font-feature-settings"
+  ],
+  "bugs": {
+    "email": "hello@smcv.dev",
+    "url": "https://github.com/semencov/tailwindcss-font-inter/issues"
+  },
+  "homepage": "https://github.com/semencov/tailwindcss-font-inter",
+  "devDependencies": {
+    "autoprefixer": "^9.6.1",
+    "fontkit": "^1.8.0",
+    "node-fetch": "^2.6.0",
+    "parcel-bundler": "^1.12.3",
+    "tailwindcss": "^1.1.2"
+  }
+}
