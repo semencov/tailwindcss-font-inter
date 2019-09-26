@@ -1,6 +1,9 @@
 const _ = require('lodash');
 const inter = require('../inter.json');
 
+/**
+ * Helpers
+ */
 const isString = val => typeof val === 'string';
 const isPlainObject = val => !!val && typeof val === 'object' && val.constructor === Object;
 const isArrayLike = obj => obj != null && typeof obj[Symbol.iterator] === 'function';
@@ -144,7 +147,7 @@ module.exports = (opts = {}) => {
     options.importFontFace && addBase(base);
 
     // Add .font-inter
-    addUtilities(utilities, variants('fontFamily'));
+    addUtilities(utilities);
 
     // Add .font-feature-{modier} utility classes
     let interFontFeatures = filterObject(theme('interFontFeatures'), (key, val) => !isEmpty(val));
