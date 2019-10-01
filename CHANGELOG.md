@@ -1,5 +1,7 @@
 ### Version 1.0.1
 
+- Fixed exception when no `interFontFeatures` config specified.
+
 ### Version 1.0.0
 
 Currently supports fot feature settings and dynamic line height with the different font sizes.
