@@ -150,7 +150,7 @@ module.exports = (opts = {}) => {
     addUtilities(utilities);
 
     // Add .font-feature-{modier} utility classes
-    let interFontFeatures = filterObject(theme('interFontFeatures'), (key, val) => !isEmpty(val));
+    let interFontFeatures = filterObject(theme('interFontFeatures', {}), (key, val) => !isEmpty(val));
     let fontFeatures = Object.entries(interFontFeatures).map(([modifier, value]) => {
       let features = generateFeatures(value, availableFeatures, options);
       return features.length > 0 ? [modifier, features] : null;
@@ -179,7 +179,7 @@ module.exports = (opts = {}) => {
     // Add .text-inter-{size} utility classes
     // Modifiers are inherited from fontSize config
     const textSizeUtilities = Object.fromEntries(
-      Object.entries(theme('fontSize')).flatMap(([modifier, fontSize]) => {
+      Object.entries(theme('fontSize', {})).flatMap(([modifier, fontSize]) => {
         if (fontSize.slice(-3) === 'rem') {
           fontSize = parseFloat(fontSize.slice(0, -3)) * options.baseFontSize;
         } else if (fontSize.slice(-2) === 'em') {
@@ -189,7 +189,7 @@ module.exports = (opts = {}) => {
         let selector = fontInterSelector(`.${e(`text-inter-${modifier}`)}`);
         let baseRule = fontSizeRule(selector, fontSize, options.baseLineHeight, options);
 
-        let leadingRules = Object.entries(theme('lineHeight')).map(([modifier, lineHeight]) => {
+        let leadingRules = Object.entries(theme('lineHeight', {})).map(([modifier, lineHeight]) => {
           let inheritSelector = fontInterSelector(selector, `.${e(`leading-${modifier}`)}`);
           return fontSizeRule(inheritSelector, fontSize, lineHeight, options);
         });
