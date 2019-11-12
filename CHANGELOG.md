@@ -1,3 +1,9 @@
+### Version 1.0.2
+
+- Inter font updated to v3.11
+- Demo page updated
+- Small improvements
+
 ### Version 1.0.1
 
 - Fixed exception when no `interFontFeatures` config specified.
