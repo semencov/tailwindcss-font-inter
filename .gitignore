@@ -1,4 +1,5 @@
 .cache
+.temp
 fonts
 dist
 node_modules

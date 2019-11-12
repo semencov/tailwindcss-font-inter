@@ -116,7 +116,7 @@ function generateFeatures(features, availableFeatures, { disableUnusedFeatures =
     features = Object.assign({}, available, features);
   }
 
-  settings = Object.entries(features).map(([key, value]) => (value === '1' ? `"${key}"` : `"${key}" ${value}`));
+  settings = Object.entries(features).map(([key, value]) => `"${key}" ${value}`);
 
   return settings
     .filter(val => !!val)

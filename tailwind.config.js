@@ -2,8 +2,10 @@ module.exports = {
   theme: {
     extend: {
       interFontFeatures: {
-        default: ['calt', 'liga', 'kern'],
-        numeric: ['tnum', 'salt', 'ss02']
+        default: ['liga', 'kern'],
+        numeric: ['tnum', 'salt'],
+        disambiguation: ['ss02'],
+        capital: ['csps']
       },
     },
   },
