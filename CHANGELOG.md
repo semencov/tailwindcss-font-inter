@@ -1,3 +1,6 @@
+### Version 1.0.3
+- Bump
+
 ### Version 1.0.2
 
 - Inter font updated to v3.11
