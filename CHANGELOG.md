@@ -1,5 +1,6 @@
 ### Version 1.0.3
-- Bump
+
+- Bump config
 
 ### Version 1.0.2
 

@@ -1,9 +1,18 @@
 {
-  "tag": {
-    "enabled": true,
-    "name": "[version]"
-  },
-  "scripts": {
-    "posttag": "npm publish"
-  }
+    "changelog": {
+        "enabled": true,
+        "create": false,
+        "open": true,
+        "file": "CHANGELOG.md",
+        "version": "### Version [version]\n",
+        "commit": "- [message]",
+        "separator": "\n"
+    },
+    "tag": {
+        "enabled": true,
+        "name": "v[version]"
+    },
+    "scripts": {
+        "posttag": "npm publish"
+    }
 }
