@@ -9,10 +9,19 @@
         "separator": "\n"
     },
     "tag": {
-        "enabled": true,
+        "enabled": false,
         "name": "v[version]"
     },
+    "release": {
+        "github": {
+          "enabled": true,
+          "files": [
+            "src/**",
+            "inter.json"
+          ]
+        }
+      },
     "scripts": {
-        "posttag": "npm publish"
+        "postrelease": "npm publish"
     }
 }
