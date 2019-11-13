@@ -1,0 +1,9 @@
+{
+  "tag": {
+    "enabled": true,
+    "name": "[version]"
+  },
+  "scripts": {
+    "posttag": "npm publish"
+  }
+}

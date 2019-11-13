@@ -5,6 +5,9 @@
   "license": "MIT",
   "main": "src/index.js",
   "author": "Yuri Sementsov <hello@smcv.dev>",
+  "files": [
+    "src"
+  ],
   "scripts": {
     "dev": "parcel serve demo/index.html --open",
     "update": "node ./update.js",
