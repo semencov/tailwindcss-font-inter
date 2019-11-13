@@ -1,6 +1,5 @@
 ### Version 1.0.5
 
-- Create npmpublish.yml
 - Bump config adjustments
 
 ### Version 1.0.4
