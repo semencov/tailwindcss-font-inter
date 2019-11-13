@@ -1,3 +1,7 @@
+### Version 1.0.4
+
+- Bump config adjustments
+
 ### Version 1.0.3
 
 - Bump config
