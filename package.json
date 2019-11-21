@@ -6,7 +6,8 @@
   "main": "src/index.js",
   "author": "Yuri Sementsov <hello@smcv.dev>",
   "files": [
-    "src"
+    "src",
+    "inter.json"
   ],
   "scripts": {
     "dev": "parcel serve demo/index.html --open",
