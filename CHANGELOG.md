@@ -1,5 +1,11 @@
 ### Version 1.0.7
 
+- Bump
+- Fixed line height and letter spacing values calculation for different font sizes (#2, #3)
+- Bump
+
+### Version 1.0.7
+
 - Fixed line height and letter spacing values calculation for different font sizes (#2, #3)
 
 ### Version 1.0.6
