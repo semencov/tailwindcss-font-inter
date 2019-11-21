@@ -1,7 +1,5 @@
 ### Version 1.0.6
 
-- Bumped version to 1.0.5
-- Removed Actions
 - Fixed npm package missed files
 
 ### Version 1.0.5
