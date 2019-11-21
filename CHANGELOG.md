@@ -1,3 +1,7 @@
+### Version 1.0.7
+
+- Fixed line height and letter spacing values calculation for different font sizes (#2, #3)
+
 ### Version 1.0.6
 
 - Fixed npm package missed files
