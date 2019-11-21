@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const inter = require('../inter.json');
 
 /**
@@ -12,6 +11,54 @@ const mapObject = (obj, cb) => Object.fromEntries(Object.entries(obj).map(val =>
 const filterObject = (obj, cb) => Object.fromEntries(Object.entries(obj).filter(val => cb(...val)));
 const round = (num, prec = 3) => parseFloat(num.toFixed(prec));
 const unquote = str => str.replace(/^['"]|['"]$/g, '').trim();
+
+const unitsDefaults = (baseFontSize = 16) => ({
+  'ch': 8,
+  'ex': 7.15625,
+  'em': baseFontSize,
+  'rem': baseFontSize,
+  '%': baseFontSize / 100,
+  'in': 96,
+  'cm': 96 / 2.54,
+  'mm': 96 / 25.4,
+  'pt': 96 / 72,
+  'pc': 96 / 6,
+  'px': 1
+});
+
+/**
+ * Parses CSS size/length value
+ *
+ * @param {any} value   Any CSS size value with units
+ * @param {Number} lineHeight  Relative line height
+ *
+ * @return {Array}
+ */
+function parseUnit(value) {
+  let str = String(value);
+  return [
+    parseFloat(str, 10),
+    str.match(/[\d.\-\+]*\s*(.*)/)[1] || ''
+  ]
+}
+
+function getUnitConverter (baseFontSize = 16) {
+  const defaults = unitsDefaults(baseFontSize);
+
+  return function toPX(str) {
+    if (isEmpty(str)) return 0;
+    if (defaults[str]) return defaults[str];
+
+    let [value, unit] = parseUnit(str);
+
+    if (!isNaN(value) && unit) {
+      let px = toPX(unit);
+      return typeof px === 'number' ? value * px : 0;
+    }
+
+    return 0;
+  }
+}
 
 /**
  * Calculates line height
@@ -116,9 +163,8 @@ function generateFeatures(features, availableFeatures, { disableUnusedFeatures =
     features = Object.assign({}, available, features);
   }
 
-  settings = Object.entries(features).map(([key, value]) => `"${key}" ${value}`);
-
-  return settings
+  return Object.entries(features)
+    .map(([key, value]) => `"${key}" ${value}`)
     .filter(val => !!val)
     .sort()
     .join(', ')
@@ -178,27 +224,26 @@ module.exports = (opts = {}) => {
 
     // Add .text-inter-{size} utility classes
     // Modifiers are inherited from fontSize config
+    const px = getUnitConverter(options.baseFontSize);
+
     const textSizeUtilities = Object.fromEntries(
-      Object.entries(theme('fontSize', {})).flatMap(([modifier, fontSize]) => {
-        if (fontSize.slice(-3) === 'rem') {
-          fontSize = parseFloat(fontSize.slice(0, -3)) * options.baseFontSize;
-        } else if (fontSize.slice(-2) === 'em') {
-          fontSize = parseFloat(fontSize.slice(0, -2)) * options.baseFontSize;
-        }
+      Object.entries(theme('fontSize', {}))
+        .flatMap(([modifier, fontSize]) => {
+          let size = px(fontSize);
+          let selector = fontInterSelector(`.${e(`text-inter-${modifier}`)}`);
+          let baseRule = fontSizeRule(selector, size, options.baseLineHeight, options);
 
-        let selector = fontInterSelector(`.${e(`text-inter-${modifier}`)}`);
-        let baseRule = fontSizeRule(selector, fontSize, options.baseLineHeight, options);
+          let leadingRules = Object.entries(theme('lineHeight', {}))
+            .map(([modifier, lineHeight]) => {
+              let inheritSelector = fontInterSelector(selector, `.${e(`leading-${modifier}`)}`);
+              return fontSizeRule(inheritSelector, size, lineHeight, options);
+            });
 
-        let leadingRules = Object.entries(theme('lineHeight', {})).map(([modifier, lineHeight]) => {
-          let inheritSelector = fontInterSelector(selector, `.${e(`leading-${modifier}`)}`);
-          return fontSizeRule(inheritSelector, fontSize, lineHeight, options);
-        });
+          // TODO: Add modifiers for tailwind's tracking
+          let trackingRules = [];
 
-        // TODO: Add modifiers for tailwind's tracking
-        let trackingRules = [];
-
-        return [baseRule, ...leadingRules, ...trackingRules];
-      })
+          return [baseRule, ...leadingRules, ...trackingRules];
+        })
     );
 
     addUtilities(textSizeUtilities, variants('fontSize'));

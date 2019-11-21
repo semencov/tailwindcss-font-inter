@@ -38,7 +38,7 @@ function printFontSizes(sizes = {}) {
             <p class="text-xs text-gray-500 py-2">
               .text-inter-${name}
             </p>
-            <div class="border-t border-b border-solid border-blue-200 mb-10 text-inter-${name}">
+            <div class="mb-10 text-inter-${name}">
               ${shortText}
             </div>
           </div>`
