@@ -1,3 +1,8 @@
+### Version 1.0.8
+
+- Bump
+- Replaced Object.fromEntries with lodash methods to provide compatability older Node.js versions
+
 ### Version 1.0.7
 
 - Fixed line height and letter spacing values calculation for different font sizes (#2, #3)
