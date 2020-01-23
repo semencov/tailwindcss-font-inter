@@ -1,7 +1,7 @@
 {
   "name": "tailwindcss-font-inter",
   "description": "TailwindCSS Plugin to integrate with Inter Typeface.",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "license": "MIT",
   "main": "src/index.js",
   "author": "Yuri Sementsov <hello@smcv.dev>",
@@ -44,6 +44,8 @@
     "tailwindcss": "^1.1.3"
   },
   "dependencies": {
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "parse-unit": "^1.0.1",
+    "to-px": "^1.1.0"
   }
 }
