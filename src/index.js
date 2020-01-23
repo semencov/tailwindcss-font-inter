@@ -36,7 +36,7 @@ const generateFeatures = (features, available, config) => {
         } else if (_.isArrayLike(feature)) {
           [key, value = "1"] = feature;
         } else if (_.isPlainObject(feature)) {
-          [key, value = "1"] = toPairs(feature)[0];
+          [key, value = "1"] = _.toPairs(feature)[0];
         }
 
         return normalizeEntry(key, value);
@@ -100,8 +100,8 @@ module.exports = function(options = {}) {
 
     const fontFeaturesTheme = theme("interFontFeatures", defaultFontFeaturesTheme);
     const fontSizeTheme = theme("fontSize", defaultFontSizeTheme);
-    const fontSizeVariants = variants("fontSize", defaultFontSizeVariants);
     const lineHeightTheme = theme("lineHeight", defaultLineHeightTheme);
+    const fontSizeVariants = variants("fontSize", defaultFontSizeVariants);
 
     const defaultLineHeight = _.defaults({}, lineHeightTheme, defaultLineHeightTheme).normal;
 
