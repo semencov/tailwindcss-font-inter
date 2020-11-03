@@ -10,7 +10,7 @@
     "inter.json"
   ],
   "scripts": {
-    "dev": "parcel serve demo/index.html --open",
+    "dev": "parcel serve demo/index.html",
     "update": "node ./update.js",
     "build": "parcel build demo/index.html",
     "test": "echo Success"
@@ -37,7 +37,7 @@
     "tailwindcss": "^1.9.0"
   },
   "devDependencies": {
-    "autoprefixer": "^10.0.1",
+    "autoprefixer": "^9.8.0",
     "fontkit": "^1.8.1",
     "node-fetch": "^2.6.1",
     "parcel-bundler": "^1.12.4",
