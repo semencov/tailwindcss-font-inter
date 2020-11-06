@@ -3,12 +3,10 @@ const parseUnit = require('parse-unit');
 const { toPx } = require('./utils');
 const Inter = require('../inter.json');
 
-const isNumeric = val => !isNaN(val) && !isNaN(parseFloat(val));
 const mapObject = (obj, cb) => _.fromPairs(_.toPairs(obj).map(val => cb(...val)));
 const filterObject = (obj, cb) => _.fromPairs(_.toPairs(obj).filter(val => cb(...val)));
 const round = (num, prec = 3) => parseFloat(num.toFixed(prec));
 const unquote = str => str.replace(/^['"]|['"]$/g, '').trim();
-const leading = (fontSize, lineHeight = 1.5) => Math.round(fontSize * lineHeight);
 const tracking = (fontSize, a, b, c) => a + b * Math.pow(Math.E, c * fontSize);
 
 const normalizeEntry = (key, value) => {
@@ -21,7 +19,9 @@ const normalizeEntry = (key, value) => {
 const generateFeatures = (features, available, config) => {
     const { disableUnusedFeatures = false } = config;
 
-    if (!_.isPlainObject(features)) {
+    if (_.isPlainObject(features)) {
+        features = mapObject(features, (key, value = '1') => normalizeEntry(key, value));
+    } else {
         if (_.isString(features)) {
             features = _.fromPairs(features.split(',').map(f => f.trim().split(' ')));
         }
@@ -41,8 +41,6 @@ const generateFeatures = (features, available, config) => {
                 return normalizeEntry(key, value);
             })
         );
-    } else {
-        features = mapObject(features, (key, value = '1') => normalizeEntry(key, value));
     }
 
     features = filterObject(features, key => available.includes(key));
@@ -73,41 +71,33 @@ module.exports = function (options = {}) {
         });
 
         const defaultFontFeaturesTheme = { default: 'normal' };
-        const defaultFontSizeTheme = { base: '1rem' };
-        const defaultLineHeightTheme = { normal: '1.5rem' };
         const defaultFontSizeVariants = ['responsive'];
 
-        const fontFeaturesTheme = theme('interFontFeatures', defaultFontFeaturesTheme);
-        const fontSizeTheme = theme('fontSize', defaultFontSizeTheme);
-        const lineHeightTheme = theme('lineHeight', defaultLineHeightTheme);
+        const fontSizeTheme = theme('fontSize', []);
         const fontSizeVariants = variants('fontSize', defaultFontSizeVariants);
+        const fontFeaturesTheme = theme('interFontFeatures', defaultFontFeaturesTheme);
 
         const baseStyles = {
             ...(defaultConfig.importFontFace ? base : {})
         };
 
-        let defaultFontSize = _.defaults({}, fontSizeTheme, defaultFontSizeTheme).base;
-        let defaultLineHeight = _.defaults({}, lineHeightTheme, defaultLineHeightTheme).normal;
-
-        if (isNumeric(defaultLineHeight)) {
-            defaultLineHeight = `${defaultLineHeight}rem`;
-        }
-
-        defaultFontSize = toPx(defaultFontSize);
-        defaultLineHeight = toPx(defaultLineHeight);
-
-        const fontSizeStyles = (fontSize, lineHeight, { a, b, c }) => {
+        const fontSizeStyles = (fontSize, { a, b, c }) => {
             let [size, unit] = parseUnit(fontSize);
-            let sizePx = toPx(fontSize);
+            let sizePx;
+
+            if (unit === '%') {
+                sizePx = (size / 100) * defaultConfig.baseFontSize;
+            } else {
+                sizePx = toPx(fontSize);
+            }
+
             console.log(size, sizePx, ' - ', unit);
 
             let trackingSize = tracking(sizePx, a, b, c);
-            let leadingSize = leading(sizePx, lineHeight);
 
             return {
                 fontSize,
-                letterSpacing: `${round(trackingSize)}em`,
-                lineHeight: round(leadingSize)
+                letterSpacing: `${round(trackingSize, 7)}em`
             };
         };
 
@@ -137,7 +127,7 @@ module.exports = function (options = {}) {
                 return [
                     `.${e(`text-inter-${modifier}`)}`,
                     {
-                        ...fontSizeStyles(value, defaultLineHeight, { a, b, c })
+                        ...fontSizeStyles(value, { a, b, c })
                     }
                 ];
             })

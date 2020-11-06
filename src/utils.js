@@ -17,7 +17,7 @@ const defaultUnitsRatio = {
 
 const isNumeric = val => !isNaN(val) && !isNaN(parseFloat(val));
 
-const toPx = (str, base = 16, defaultUnit = 'rem') => {
+const toPx = str => {
     if (!str && str !== 0) return null;
     if (defaultUnitsRatio[str]) return defaultUnitsRatio[str];
 
