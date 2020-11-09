@@ -1,38 +1,48 @@
-const _ = require('lodash');
 const { toPx } = require('./utils');
 const Inter = require('../inter.json');
 
-const mapObject = (obj, cb) => _.fromPairs(_.toPairs(obj).map(val => cb(...val)));
-const filterObject = (obj, cb) => _.fromPairs(_.toPairs(obj).filter(val => cb(...val)));
+const isPlainObject = val => !!val && typeof val === 'object' && val.constructor === Object;
+const isArrayLike = obj => obj != null && typeof obj[Symbol.iterator] === 'function';
+const isBoolean = val => typeof val === 'boolean';
+const isString = val => typeof val === 'string';
+const entries = obj => Object.keys(obj).map(key => [key, obj[key]]);
+const fromEntries = iterable =>
+    [...iterable].reduce((obj, [key, val]) => {
+        obj[key] = val;
+        return obj;
+    }, {});
+const mapObject = (obj, cb) => fromEntries((Array.isArray(obj) ? obj : entries(obj)).map(val => cb(...val)));
+const filterObject = (obj, cb) => fromEntries((Array.isArray(obj) ? obj : entries(obj)).filter(val => cb(...val)));
+const defaults = (obj, ...defs) => Object.assign({}, obj, ...defs.reverse(), obj);
 const round = (num, prec = 3) => parseFloat(num.toFixed(prec));
 const unquote = str => str.replace(/^['"]|['"]$/g, '').trim();
 const tracking = (fontSize, a, b, c) => a + b * Math.pow(Math.E, c * fontSize);
 
 const normalizeEntry = (key, value) => {
-    value = _.isBoolean(value) ? '' + 1 * value : '' + value;
+    value = isBoolean(value) ? '' + 1 * value : '' + value;
     value = value !== '1' && value !== 'undefined' ? value : '1';
 
     return [unquote(key), value];
 };
 
 const generateFeatures = (features, available) => {
-    if (_.isPlainObject(features)) {
+    if (isPlainObject(features)) {
         features = mapObject(features, (key, value = '1') => normalizeEntry(key, value));
     } else {
-        if (_.isString(features)) {
-            features = _.fromPairs(features.split(',').map(f => f.trim().split(' ')));
+        if (isString(features)) {
+            features = fromEntries(features.split(',').map(f => f.trim().split(' ')));
         }
 
-        features = _.fromPairs(
+        features = fromEntries(
             features.map(feature => {
                 let key, value;
 
-                if (_.isString(feature)) {
+                if (isString(feature)) {
                     [key, value = '1'] = feature.replace(/\s\s+/g, ' ').split(' ', 2);
-                } else if (_.isArrayLike(feature)) {
+                } else if (isArrayLike(feature)) {
                     [key, value = '1'] = feature;
-                } else if (_.isPlainObject(feature)) {
-                    [key, value = '1'] = _.toPairs(feature)[0];
+                } else if (isPlainObject(feature)) {
+                    [key, value = '1'] = entries(feature)[0];
                 }
 
                 return normalizeEntry(key, value);
@@ -42,7 +52,7 @@ const generateFeatures = (features, available) => {
 
     features = filterObject(features, key => available.includes(key));
 
-    return _.toPairs(features)
+    return entries(features)
         .map(([key, value]) => `"${key}" ${value}`)
         .filter(val => !!val)
         .sort()
@@ -54,7 +64,7 @@ module.exports = function (options = {}) {
     return ({ addBase, addUtilities, variants, e, theme }) => {
         const { availableFeatures, utilities, base } = Inter;
 
-        const defaultConfig = _.defaults(options, {
+        const defaultConfig = defaults(options, {
             a: -0.0223,
             b: 0.185,
             c: -0.1745,
@@ -69,10 +79,7 @@ module.exports = function (options = {}) {
         const fontSizeVariants = variants('fontSize', defaultFontSizeVariants);
         const fontFeaturesTheme = theme('interFontFeatures', defaultFontFeaturesTheme);
 
-        const fontFeatures = {
-            ...defaultFontFeaturesTheme,
-            ...fontFeaturesTheme
-        };
+        const fontFeatures = defaults(fontFeaturesTheme, defaultFontFeaturesTheme);
         const baseStyles = {
             ...(defaultConfig.importFontFace ? base : {})
         };
@@ -88,40 +95,37 @@ module.exports = function (options = {}) {
         };
 
         const fontFeatureStyles = value => {
-            return {
-                fontFeatureSettings: _.isArray(value) ? value.join(', ') : value
-            };
+            return value.length ? { fontFeatureSettings: Array.isArray(value) ? value.join(', ') : value } : null;
         };
 
-        const fontFeatureUtilities = _.fromPairs(
-            _.chain(fontFeatures)
-                .map((value, modifier) => {
-                    const features = generateFeatures(value, availableFeatures);
-                    if (!features.length) return [null];
-
-                    return [
-                        `.font-inter .${e(`font-feature-${modifier}`)}, .font-inter.${e(`font-feature-${modifier}`)}`,
-                        {
-                            ...fontFeatureStyles(features)
-                        }
-                    ];
-                })
-                .filter(([key]) => key !== null)
-                .value()
-        );
-
-        const fontSizeUtilities = _.fromPairs(
-            _.map(fontSizeTheme, (value, modifier) => {
-                const { a, b, c } = defaultConfig;
+        const fontFeatureUtilities = {
+            ...{
+                '.font-inter .font-feature-normal, .font-inter.font-feature-normal': {
+                    ...fontFeatureStyles('normal')
+                }
+            },
+            ...mapObject(fontFeatures, (modifier, value) => {
+                const features = generateFeatures(value, availableFeatures);
 
                 return [
-                    `.font-inter .${e(`text-${modifier}`)}, .font-inter.${e(`text-${modifier}`)}`,
+                    `.font-inter .${e(`font-feature-${modifier}`)},.font-inter.${e(`font-feature-${modifier}`)}`,
                     {
-                        ...fontSizeStyles(value, { a, b, c })
+                        ...fontFeatureStyles(features)
                     }
                 ];
             })
-        );
+        };
+
+        const fontSizeUtilities = mapObject(fontSizeTheme, (modifier, value) => {
+            const { a, b, c } = defaultConfig;
+
+            return [
+                `.font-inter .${e(`text-${modifier}`)}, .font-inter.${e(`text-${modifier}`)}`,
+                {
+                    ...fontSizeStyles(value, { a, b, c })
+                }
+            ];
+        });
 
         // Add @font-face if importFontFace: true
         // see https://rsms.me/inter/inter.css

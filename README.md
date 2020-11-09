@@ -71,7 +71,6 @@ The plugin uses [`fontSize` core plugin](https://tailwindcss.com/docs/configurat
 module.exports = {
     theme: {
         fontFeatureSettings: {
-            default: ['calt', 'liga', 'kern'],
             numeric: ['tnum', 'salt', 'ss02']
         },
         fontSize: {
@@ -301,7 +300,6 @@ Also the plugin generates utility classes which allow you to specify named font 
 module.exports = {
     theme: {
         interFontFeatures: {
-            default: ['calt', 'kern'],
             numeric: ['tnum', 'salt', 'ss02']
         }
     },
@@ -312,7 +310,7 @@ module.exports = {
 This will generate the following classes:
 
 ```css
-/* This is a default class */
+/* This is a default classes */
 .font-inter .font-feature-normal,
 .font-inter.font-feature-normal {
     font-feature-settings: normal;
@@ -323,6 +321,7 @@ This will generate the following classes:
     font-feature-settings: 'calt' 1, 'kern' 1;
 }
 
+/* This is a custom class defuned in config */
 .font-inter .font-feature-numeric,
 .font-inter.font-feature-numeric {
     font-feature-settings: 'tnum' 1, 'salt' 1, 'ss02' 1;
