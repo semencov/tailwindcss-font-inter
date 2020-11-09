@@ -1,3 +1,13 @@
+### Version 2.0.0
+
+- typo
+- Update dependencies
+- Update Inter to v3.15
+- Units normalization
+- Units normalization
+- Tailwind setup
+- Refactoring styles generation
+
 ### Version 1.0.8
 
 - Replaced Object.fromEntries with lodash methods to provide compatability older Node.js versions
