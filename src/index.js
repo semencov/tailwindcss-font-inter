@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const parseUnit = require('parse-unit');
 const { toPx } = require('./utils');
 const Inter = require('../inter.json');
 
@@ -16,9 +15,7 @@ const normalizeEntry = (key, value) => {
     return [unquote(key), value];
 };
 
-const generateFeatures = (features, available, config) => {
-    const { disableUnusedFeatures = false } = config;
-
+const generateFeatures = (features, available) => {
     if (_.isPlainObject(features)) {
         features = mapObject(features, (key, value = '1') => normalizeEntry(key, value));
     } else {
@@ -45,11 +42,6 @@ const generateFeatures = (features, available, config) => {
 
     features = filterObject(features, key => available.includes(key));
 
-    if (!!disableUnusedFeatures) {
-        let available = _.fromPairs(available.map(val => [val, '0']));
-        features = _.defaults(features, available);
-    }
-
     return _.toPairs(features)
         .map(([key, value]) => `"${key}" ${value}`)
         .filter(val => !!val)
@@ -70,30 +62,24 @@ module.exports = function (options = {}) {
             importFontFace: false
         });
 
-        const defaultFontFeaturesTheme = { default: 'normal' };
+        const defaultFontFeaturesTheme = { default: ['calt', 'kern'] };
         const defaultFontSizeVariants = ['responsive'];
 
         const fontSizeTheme = theme('fontSize', []);
         const fontSizeVariants = variants('fontSize', defaultFontSizeVariants);
         const fontFeaturesTheme = theme('interFontFeatures', defaultFontFeaturesTheme);
 
+        const fontFeatures = {
+            ...defaultFontFeaturesTheme,
+            ...fontFeaturesTheme
+        };
         const baseStyles = {
             ...(defaultConfig.importFontFace ? base : {})
         };
 
         const fontSizeStyles = (fontSize, { a, b, c }) => {
-            let [size, unit] = parseUnit(fontSize);
-            let sizePx;
-
-            if (unit === '%') {
-                sizePx = (size / 100) * defaultConfig.baseFontSize;
-            } else {
-                sizePx = toPx(fontSize);
-            }
-
-            console.log(size, sizePx, ' - ', unit);
-
-            let trackingSize = tracking(sizePx, a, b, c);
+            const sizeInPx = toPx(fontSize, defaultConfig.baseFontSize);
+            const trackingSize = tracking(sizeInPx, a, b, c);
 
             return {
                 fontSize,
@@ -108,16 +94,20 @@ module.exports = function (options = {}) {
         };
 
         const fontFeatureUtilities = _.fromPairs(
-            _.map(fontFeaturesTheme, (value, modifier) => {
-                let features = generateFeatures(value, availableFeatures, defaultConfig);
+            _.chain(fontFeatures)
+                .map((value, modifier) => {
+                    const features = generateFeatures(value, availableFeatures);
+                    if (!features.length) return [null];
 
-                return [
-                    `.${e(`font-feature-${modifier}`)}`,
-                    {
-                        ...fontFeatureStyles(features)
-                    }
-                ];
-            })
+                    return [
+                        `.font-inter .${e(`font-feature-${modifier}`)}, .font-inter.${e(`font-feature-${modifier}`)}`,
+                        {
+                            ...fontFeatureStyles(features)
+                        }
+                    ];
+                })
+                .filter(([key]) => key !== null)
+                .value()
         );
 
         const fontSizeUtilities = _.fromPairs(
@@ -125,15 +115,13 @@ module.exports = function (options = {}) {
                 const { a, b, c } = defaultConfig;
 
                 return [
-                    `.${e(`text-inter-${modifier}`)}`,
+                    `.font-inter .${e(`text-${modifier}`)}, .font-inter.${e(`text-${modifier}`)}`,
                     {
                         ...fontSizeStyles(value, { a, b, c })
                     }
                 ];
             })
         );
-
-        console.log(fontSizeUtilities);
 
         // Add @font-face if importFontFace: true
         // see https://rsms.me/inter/inter.css
@@ -145,7 +133,7 @@ module.exports = function (options = {}) {
         // Add .font-feature-{modifier} utility classes
         addUtilities(fontFeatureUtilities);
 
-        // Add .text-inter-{size} utility classes
+        // Add .font-inter.text-{size} utility classes
         addUtilities(fontSizeUtilities, fontSizeVariants);
     };
 };

@@ -17,7 +17,7 @@ const defaultUnitsRatio = {
 
 const isNumeric = val => !isNaN(val) && !isNaN(parseFloat(val));
 
-const toPx = str => {
+const toPx = (str, baseSize) => {
     if (!str && str !== 0) return null;
     if (defaultUnitsRatio[str]) return defaultUnitsRatio[str];
 
@@ -26,7 +26,11 @@ const toPx = str => {
 
     if (isNumeric(parts[0])) {
         if (parts[1]) {
-            const px = toPx(parts[1]);
+            if (parts[1] === '%') {
+                return (parseFloat(parts[0]) / 100) * baseSize;
+            }
+
+            const px = toPx(parts[1], baseSize);
             return typeof px === 'number' ? parts[0] * px : null;
         } else {
             return parts[0];

@@ -1,7 +1,9 @@
-import tailwindConfig from '../tailwind.config.js'
+import tailwindConfig from '../tailwind.config.js';
 import resolveConfig from 'tailwindcss/resolveConfig';
 
-const { theme: { interFontFeatures, fontSize } } = resolveConfig(tailwindConfig);
+const {
+    theme: { interFontFeatures, fontSize }
+} = resolveConfig(tailwindConfig);
 const shortText = `
   <p class="font-black">Minute 360</p>
   <p class="font-semibold">Zenith zone</p>
@@ -21,52 +23,51 @@ console.log(interFontFeatures, fontSize);
 
 const query = selector => document.querySelector(selector);
 const render = str => {
-  const el = document.createElement('div');
-  el.innerHTML = str;
-  return el.firstElementChild;
+    const el = document.createElement('div');
+    el.innerHTML = str;
+    return el.firstElementChild;
 };
 
 function printFontSizes(sizes = {}) {
-  let container = query('#fontSizes');
+    let container = query('#fontSizes');
 
-  if (container) {
-    Object.entries(sizes)
-      .reverse()
-      .forEach(([name]) => {
-        let el = render(
-          `<div>
-            <p class="text-xs text-gray-500 py-2">
-              .text-inter-${name}
-            </p>
-            <div class="mb-10 text-inter-${name}">
-              ${shortText}
-            </div>
-          </div>`
-        );
-        container.appendChild(el)
-      });
-  }
+    if (container) {
+        Object.entries(sizes)
+            .reverse()
+            .forEach(([name]) => {
+                const el = render(
+                    `<div>
+                      <p class="text-xs text-gray-500 py-2">
+                        .text-inter-${name}
+                      </p>
+                      <div class="mb-10 text-${name}">
+                        ${shortText}
+                      </div>
+                    </div>`
+                );
+                container.appendChild(el);
+            });
+    }
 }
 
 function printFontFeatures(features = {}) {
-  let container = query('#fontFeatures');
+    let container = query('#fontFeatures');
 
-  if (container) {
-    Object.entries(features)
-      .forEach(([name, value]) => {
-        let el = render(
-          `<div>
-            <p class="text-xs text-gray-500 py-2">
-              .font-feature-${name} (${value.join(', ')})
-            </p>
-            <div class="mb-10 text-inter-2xl font-feature-${name}">
-              ${longText}
-            </div>
-          </div>`
-        );
-        container.appendChild(el)
-      });
-  }
+    if (container) {
+        Object.entries(features).forEach(([name, value]) => {
+            const el = render(
+                `<div>
+                  <p class="text-xs text-gray-500 py-2">
+                    .font-feature-${name} (${value.join(', ')})
+                  </p>
+                  <div class="mb-10 text-2xl font-feature-${name}">
+                    ${longText}
+                  </div>
+                </div>`
+            );
+            container.appendChild(el);
+        });
+    }
 }
 
 printFontSizes(fontSize);
