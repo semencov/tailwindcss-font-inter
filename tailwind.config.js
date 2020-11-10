@@ -1,17 +1,16 @@
 module.exports = {
-  theme: {
-    extend: {
-      interFontFeatures: {
-        default: ['liga', 'kern'],
-        numeric: ['tnum', 'salt'],
-        disambiguation: ['ss02'],
-        capital: ['csps']
-      },
+    theme: {
+        interFontFeatures: {
+            numeric: ['tnum', 'salt', 'ss02'],
+            disambiguation: ['ss02'],
+            capital: ['cpsps']
+        }
     },
-  },
-  variants: {},
-  plugins: [require('./src/index.js')({
-    importFontFace: true,
-    disableUnusedFeatures: false
-  })],
+    variants: {},
+    plugins: [
+        require('./src/index.js')({
+            importFontFace: true,
+            disableUnusedFeatures: false
+        })
+    ]
 };
