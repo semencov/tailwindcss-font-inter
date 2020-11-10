@@ -4,6 +4,7 @@
 -   Fixed different size units caused `NaN` for letter spacing
 -   Refactored styles generation
 -   Removed line height usage as redundant
+-   Removed options `baseLineHeight` and `disableUnusedFeatures`
 -   Removed plugin specific font size classes to use inherited classes instead (`.text-inter-lg` → `.font-inter .text-lg`)
 -   Limited font feature settings classes to apply only if Inter font family applied (`.font-feature-numeric` → `.font-inter .font-feature-numeric`)
 -   Added `.font-feature-default` class with `calt` and `kern` font feature settings enabled
