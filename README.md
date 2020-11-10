@@ -1,14 +1,8 @@
 # Tailwind Inter Plugin
 
-TailwindCSS Plugin to integrate with Inter Typeface from Rasmus Andersson [@rsms](https://twitter.com/rsms).
+TailwindCSS Plugin to integrate with Inter Typeface from Rasmus Andersson [@rsms](https://twitter.com/rsms). It adds `.font-inter` class to apply Inter font family, adjusts letter spacing for each font size according to the [Dynamic Metrics](https://rsms.me/inter/dynmetrics/) and allows to toggle font feature settings. Optionally adds `@font-face` from [https://rsms.me/inter/inter.css](https://rsms.me/inter/inter.css).
 
 The plugin is inspired with [tailwind-plugin-inter-font](https://github.com/suburbicode/tailwind-plugin-font-inter) plugin developed by Imam Susanto [@imsus](https://github.com/imsus).
-
-## Features
-
--   Optionally adds `@font-face` from [https://rsms.me/inter/inter.css](https://rsms.me/inter/inter.css),
--   [Dynamic Metrics](https://rsms.me/inter/dynmetrics/) utilities,
--   Font feature settings utilities.
 
 ## Installation
 
@@ -35,6 +29,14 @@ module.exports = {
 };
 ```
 
+Now you can put `.font-inter` class to apply the font (by default `@font-face` defenitions will be added to your CSS).
+
+```html
+<body class="font-inter text-base text-black bg-white antialiased font-feature-default">
+    ...
+</body>
+```
+
 You can set additional options for plugin:
 
 ```js
@@ -48,7 +50,7 @@ module.exports = {
       b: 0.185,
       c: -0.1745,
       baseFontSize: 16,
-      importFontFace: false,
+      importFontFace: true,
     })
   ]
 };
@@ -60,7 +62,7 @@ The plugin has several adjustable options.
 
 -   `a`, `b`, `c` — constants used to calculate [Dynamic Metrics](https://rsms.me/inter/dynmetrics/).
 -   `baseFontSize` — integer for base font size, default is `16`.
--   `importFontFace` — flag to inject Inter's `@font-face` to the output, default is `false`. If `false`, you should inport Inter CSS by yourself.
+-   `importFontFace` — flag to inject Inter's `@font-face` to the output, default is `true`. If `false`, you should import Inter by yourself (e.g. from Google Fonts).
 
 ### Theme Configuration
 
@@ -90,152 +92,15 @@ module.exports = {
 };
 ```
 
-## Output
-
-This package will generate CSS on components section and utilities section.
-
 ### Font Family
 
-The plugin will add some `@font-face` declaration in base (if `importFontFace` option is set to `true`) and add `.font-inter` utility class.
-
-```css
-/* Just a copy of https://rsms.me/inter/inter.css */
-
-@font-face {
-      font-family: Inter UI;
-      font-style: normal;
-      font-weight: 400;
-      font-display: swap;
-      src: url('https://rsms.me/inter/font-files/Inter-UI-Regular.woff2?v=3.1') format('woff2'),   
-            url('https://rsms.me/inter/font-files/Inter-UI-Regular.woff?v=3.1') format('woff');
-}
-
-@font-face {
-      font-family: Inter UI;
-      font-style: italic;
-      font-weight: 400;
-      font-display: swap;
-      src: url('https://rsms.me/inter/font-files/Inter-UI-Italic.woff2?v=3.1') format('woff2'), url('https://rsms.me/inter/font-files/Inter-UI-Italic.woff?v=3.1')
-            format('woff');
-}
-
-@font-face {
-      font-family: Inter UI;
-      font-style: normal;
-      font-weight: 500;
-      font-display: swap;
-      src: url('https://rsms.me/inter/font-files/Inter-UI-Medium.woff2?v=3.1') format('woff2'), url('https://rsms.me/inter/font-files/Inter-UI-Medium.woff?v=3.1')
-            format('woff');
-}
-
-@font-face {
-      font-family: Inter UI;
-      font-style: italic;
-      font-weight: 500;
-      font-display: swap;
-      src: url('https://rsms.me/inter/font-files/Inter-UI-MediumItalic.woff2?v=3.1') format('woff2'), url('https://rsms.me/inter/font-files/Inter-UI-MediumItalic.woff?v=3.1')
-            format('woff');
-}
-
-@font-face {
-      font-family: Inter UI;
-      font-style: normal;
-      font-weight: 600;
-      font-display: swap;
-      src: url('https://rsms.me/inter/font-files/Inter-UI-SemiBold.woff2?v=3.1') format('woff2'), url('https://rsms.me/inter/font-files/Inter-UI-SemiBold.woff?v=3.1')
-            format('woff');
-}
-
-@font-face {
-      font-family: Inter UI;
-      font-style: italic;
-      font-weight: 600;
-      font-display: swap;
-      src: url('https://rsms.me/inter/font-files/Inter-UI-SemiBoldItalic.woff2?v=3.1') format('woff2'), url('https://rsms.me/inter/font-files/Inter-UI-SemiBoldItalic.woff?v=3.1')
-            format('woff');
-}
-
-@font-face {
-      font-family: Inter UI;
-      font-style: normal;
-      font-weight: 700;
-      font-display: swap;
-      src: url('https://rsms.me/inter/font-files/Inter-UI-Bold.woff2?v=3.1') format('woff2'), url('https://rsms.me/inter/font-files/Inter-UI-Bold.woff?v=3.1')
-            format('woff');
-}
-
-@font-face {
-      font-family: Inter UI;
-      font-style: italic;
-      font-weight: 700;
-      font-display: swap;
-      src: url('https://rsms.me/inter/font-files/Inter-UI-BoldItalic.woff2?v=3.1') format('woff2'), url('https://rsms.me/inter/font-files/Inter-UI-BoldItalic.woff?v=3.1')
-            format('woff');
-}
-
-@font-face {
-      font-family: Inter UI;
-      font-style: normal;
-      font-weight: 800;
-      font-display: swap;
-      src: url('https://rsms.me/inter/font-files/Inter-UI-ExtraBold.woff2?v=3.1') format('woff2'), url('https://rsms.me/inter/font-files/Inter-UI-ExtraBold.woff?v=3.1')
-            format('woff');
-}
-
-@font-face {
-      font-family: Inter UI;
-      font-style: italic;
-      font-weight: 800;
-      font-display: swap;
-      src: url('https://rsms.me/inter/font-files/Inter-UI-ExtraBoldItalic.woff2?v=3.1') format('woff2'), url('https://rsms.me/inter/font-files/Inter-UI-ExtraBoldItalic.woff?v=3.1')
-            format('woff');
-}
-
-@font-face {
-      font-family: Inter UI;
-      font-style: normal;
-      font-weight: 900;
-      font-display: swap;
-      src: url('https://rsms.me/inter/font-files/Inter-UI-Black.woff2?v=3.1') format('woff2'), url('https://rsms.me/inter/font-files/Inter-UI-Black.woff?v=3.1')
-            format('woff');
-}
-
-@font-face {
-      font-family: Inter UI;
-      font-style: italic;
-      font-weight: 900;
-      font-display: swap;
-      src: url('https://rsms.me/inter/font-files/Inter-UI-BlackItalic.woff2?v=3.1') format('woff2'), url('https://rsms.me/inter/font-files/Inter-UI-BlackItalic.woff?v=3.1')
-            format('woff');
-}
-
-@font-face {
-      font-family: Inter UI var;
-      font-style: oblique 0deg 10deg;
-      font-weight: 400 900;
-      font-display: swap;
-      src: url('https://rsms.me/inter/font-files/Inter-UI.var.woff2?v=3.1') format('woff2-variations'), url('https://rsms.me/inter/font-files/Inter-UI.var.woff2?v=3.1')
-            format('woff2');
-}
-
-.font-inter {
-      font-family: 'Inter UI', sans-serif;
-}
-
-@supports (font-variation-settings: normal) {
-      .font-inter {
-            font-family: 'Inter UI var', sans-serif;
-    }
-}
-```
+The plugin will inject `@font-face` declaration from https://rsms.me/inter/inter.css (set `importFontFace` option to `false` to import font manually) and add `.font-inter` utility class.
 
 ## Font Sizes
 
-Alongside with the default `text-lg` classes, the plugin will generate nested `text-lg` to set also letter spacing according to Inter's **Dynamic Metrics**.
+Alongside with the default `text-lg` classes, the plugin will generate nested `text-lg` to set letter spacing according to Inter's **Dynamic Metrics**.
 
 ```css
-/* Will be generated on @tailwind utilities; */
-
 .font-inter .text-xs,
 .font-inter.text-xs {
     font-size: 0.75rem;
@@ -293,7 +158,7 @@ Alongside with the default `text-lg` classes, the plugin will generate nested `t
 
 ### Font features
 
-Also the plugin generates utility classes which allow you to specify named font feature settings.
+Also the plugin generates utility classes which allow you to specify named sets of font feature settings.
 
 ```js
 // tailwind.config.js
@@ -310,7 +175,7 @@ module.exports = {
 This will generate the following classes:
 
 ```css
-/* This is a default classes */
+/* This is default classes */
 .font-inter .font-feature-normal,
 .font-inter.font-feature-normal {
     font-feature-settings: normal;
@@ -321,7 +186,7 @@ This will generate the following classes:
     font-feature-settings: 'calt' 1, 'kern' 1;
 }
 
-/* This is a custom class defuned in config */
+/* This is a custom class defined in config */
 .font-inter .font-feature-numeric,
 .font-inter.font-feature-numeric {
     font-feature-settings: 'tnum' 1, 'salt' 1, 'ss02' 1;

@@ -69,7 +69,7 @@ module.exports = function (options = {}) {
             b: 0.185,
             c: -0.1745,
             baseFontSize: 16,
-            importFontFace: false
+            importFontFace: true
         });
 
         const defaultFontFeaturesTheme = { default: ['calt', 'kern'] };

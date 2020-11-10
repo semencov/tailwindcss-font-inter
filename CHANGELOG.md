@@ -7,6 +7,7 @@
 -   Removed plugin specific font size classes to use inherited classes instead (`.text-inter-lg` → `.font-inter .text-lg`)
 -   Limited font feature settings classes to apply only if Inter font family applied (`.font-feature-numeric` → `.font-inter .font-feature-numeric`)
 -   Added `.font-feature-default` class with `calt` and `kern` font feature settings enabled
+-   Option `importFontFace` is now `true` by default
 
 ### Version 1.0.8
 
