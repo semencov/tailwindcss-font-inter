@@ -1,3 +1,10 @@
+### Version 2.0.1
+
+- Refactoring styles generation
+- Updated README.md
+- Updated CHANGELOG.md
+- tailwind 2 support
+
 ### Version 2.0.0
 
 -   Inter font updated to v3.15
