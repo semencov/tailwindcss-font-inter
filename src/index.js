@@ -85,11 +85,12 @@ module.exports = function (options = {}) {
         };
 
         const fontSizeStyles = (fontSize, { a, b, c }) => {
-            const sizeInPx = toPx(fontSize, defaultConfig.baseFontSize);
+            const size = isArrayLike(fontSize) ? fontSize[0] : fontSize;
+            const sizeInPx = toPx(size, defaultConfig.baseFontSize);
             const trackingSize = tracking(sizeInPx, a, b, c);
 
             return {
-                fontSize,
+                fontSize: size,
                 letterSpacing: `${round(trackingSize, 7)}em`
             };
         };
