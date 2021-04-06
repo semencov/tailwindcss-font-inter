@@ -1,3 +1,12 @@
+### Version 2.0.3
+
+- Fixed Tailwind 2 fontSize default theme format incompatibility
+- Fixed incorrect font size config type check
+
+### Version 2.0.2
+
+- Fixed Tailwind 2 fontSize default theme format incompatibility
+
 ### Version 2.0.1
 
 - Refactoring styles generation
