@@ -1,10 +1,10 @@
 const { toPx } = require('./utils');
 const Inter = require('../inter.json');
 
-const isPlainObject = val => !!val && typeof val === 'object' && val.constructor === Object;
-const isArrayLike = obj => obj != null && typeof obj[Symbol.iterator] === 'function';
 const isBoolean = val => typeof val === 'boolean';
 const isString = val => typeof val === 'string';
+const isArrayLike = obj => obj != null && !isString(obj) && typeof obj[Symbol.iterator] === 'function';
+const isPlainObject = val => !!val && typeof val === 'object' && val.constructor === Object;
 const entries = obj => Object.keys(obj).map(key => [key, obj[key]]);
 const fromEntries = iterable =>
     [...iterable].reduce((obj, [key, val]) => {
