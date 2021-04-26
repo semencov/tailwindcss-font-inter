@@ -22,7 +22,6 @@ release:
     - replace-prefix: 'chore: '
       new-prefix: ''
 branch:
-  base-branch: 'develop'
   version-branch-prefix: 'v'
   bump-version-commit-prefix: 'v'
 categories:
