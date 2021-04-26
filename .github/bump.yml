@@ -2,7 +2,7 @@ release:
   title-prefix: 'v'
   initial-version: '1.0.0'
   tag-prefix: 'v'
-  body-title: 'Changed'
+  body-title: "What's Changed"
   body-when-empty-changes: 'No changes'
   sort-by: 'note'
   sort-direction: 'ascending'
@@ -39,12 +39,13 @@ categories:
     commits:
       - 'feat:'
     changes-prefix: ':gift: '
-  - title: 'Changes'
+  - title: 'Minor Changes'
     labels:
-      - Refactor
+      - 'Refactor'
     commits:
       - 'refactor:'
       - 'chore:'
+      - 'build:'
     changes-prefix: ':hammer: '
   - title: 'Bug Fixes'
     labels:
@@ -63,7 +64,7 @@ categories:
       - 'Dependencies'
     skip-label: 'Development'
     commits:
-      - 'build:'
+      - 'deps:'
     changes-prefix: ':green_book: '
 bump:
   default: 'patch'
