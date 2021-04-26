@@ -1,4 +1,4 @@
-name: Release
+name: Build, Release and Publish
 
 on:
   workflow_dispatch:
@@ -21,18 +21,56 @@ on:
         required: true
 
 jobs:
+  test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache node_modules
+        id: cache-modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ matrix.node-version }}-${{ runner.OS }}-build-${{ hashFiles('package.json') }}
+
+      - name: Build
+        if: steps.cache-modules.outputs.cache-hit != 'true'
+        run: npm install
+
+      - name: Test
+        run: npm_config_yes=true npx best-test@latest
+
   release:
     runs-on: ubuntu-latest
+    needs: test
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v1
+
+      - name: Cache node_modules
+        id: cache-modules
+        uses: actions/cache@v1
         with:
-          node-version: 12
-      - run: npm install
-      # - run: npm run build
-      - run: npm_config_yes=true npx best-test@latest
+          path: node_modules
+          key: 12.x-${{ runner.OS }}-build-${{ hashFiles('package.json') }}
+
+      - name: Build
+        if: steps.cache-modules.outputs.cache-hit != 'true'
+        run: npm install
+
+      - name: Test
+        run: npm_config_yes=true npx best-test@latest
+
       - uses: MeilCli/bump-release-action@v1
         with:
           config_path: '.github/bump.yml'
@@ -40,6 +78,7 @@ jobs:
           dry_run: ${{ github.event.inputs.dry_run }}
           draft: ${{ github.event.inputs.draft }}
           pre_release: ${{ github.event.inputs.pre_release }}
+
       - name: 'Publish to NPM'
         if: github.event.inputs.dry_run != 'true'
         run: npm publish
