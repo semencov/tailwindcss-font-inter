@@ -1,11 +1,17 @@
 release:
   title-prefix: 'v'
-  initial-version: '2.0.4'
+  initial-version: '1.0.0'
   tag-prefix: 'v'
+  body-title: 'Changed'
+  body-when-empty-changes: 'No changes'
+  sort-by: 'note'
+  sort-direction: 'ascending'
   commit-note-replacers:
     - replace-prefix: 'breaking: '
       new-prefix: ''
     - replace-prefix: 'feat: '
+      new-prefix: ''
+    - replace-prefix: 'feat!: '
       new-prefix: ''
     - replace-prefix: 'refactor: '
       new-prefix: ''
@@ -16,6 +22,7 @@ release:
     - replace-prefix: 'chore: '
       new-prefix: ''
 branch:
+  base-branch: 'develop'
   version-branch-prefix: 'v'
   bump-version-commit-prefix: 'v'
 categories:
@@ -23,7 +30,9 @@ categories:
     labels:
       - 'BreakingChange'
     commits:
+      - 'BREAKING CHANGE:'
       - 'breaking:'
+      - 'feat!:'
     changes-prefix: ':warning: '
   - title: 'Changes'
     labels:
@@ -36,6 +45,7 @@ categories:
       - Refactor
     commits:
       - 'refactor:'
+      - 'chore:'
     changes-prefix: ':hammer: '
   - title: 'Bug Fixes'
     labels:
@@ -54,7 +64,7 @@ categories:
       - 'Dependencies'
     skip-label: 'Development'
     commits:
-      - 'chore:'
+      - 'build:'
     changes-prefix: ':green_book: '
 bump:
   default: 'patch'
@@ -62,9 +72,14 @@ bump:
     labels:
       - 'BreakingChange'
     commits:
+      - 'BREAKING CHANGE:'
       - 'breaking:'
+      - 'feat!:'
   minor:
     labels:
       - 'Feature'
     commits:
       - 'feat:'
+files:
+  - file-path: 'package.json'
+    line: 4
