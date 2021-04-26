@@ -7,6 +7,8 @@ release:
   sort-by: 'note'
   sort-direction: 'ascending'
   commit-note-replacers:
+    - replace-prefix: 'BREAKING CHANGE: '
+      new-prefix: ''
     - replace-prefix: 'breaking: '
       new-prefix: ''
     - replace-prefix: 'feat: '
@@ -20,6 +22,10 @@ release:
     - replace-prefix: 'docs: '
       new-prefix: ''
     - replace-prefix: 'chore: '
+      new-prefix: ''
+    - replace-prefix: 'deps: '
+      new-prefix: ''
+    - replace-prefix: 'build: '
       new-prefix: ''
 branch:
   version-branch-prefix: 'v'
