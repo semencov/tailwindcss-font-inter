@@ -14,7 +14,7 @@ The plugin is inspired with [tailwind-plugin-inter-font](https://github.com/subu
 npm install --save-dev tailwindcss-font-inter
 
 # or with yarn
-yarn add --dev tailwindcss-font-inter
+yarn add -D tailwindcss-font-inter
 ```
 
 ## Usage
