@@ -1,3 +1,4 @@
+const plugin = require('tailwindcss/plugin')
 const { toPx } = require('./utils')
 const Inter = require('../inter.json')
 
@@ -58,17 +59,17 @@ const generateFeatures = (features, available) => {
     .trim()
 }
 
-module.exports = function(options = {}) {
-  return ({ addBase, addUtilities, variants, e, theme }) => {
-    const { availableFeatures, utilities, base } = Inter
+module.exports = plugin.withOptions(function(options = {}) {
+  const config = defaults(options, {
+    a: -0.0223,
+    b: 0.185,
+    c: -0.1745,
+    baseFontSize: 16,
+    importFontFace: true,
+  })
 
-    const defaultConfig = defaults(options, {
-      a: -0.0223,
-      b: 0.185,
-      c: -0.1745,
-      baseFontSize: 16,
-      importFontFace: true,
-    })
+  return function({ addBase, addUtilities, variants, e, theme }) {
+    const { availableFeatures, utilities, base } = Inter
 
     const defaultFontFeaturesTheme = { default: ['calt', 'kern'] }
     const defaultFontSizeVariants = ['responsive']
@@ -78,13 +79,14 @@ module.exports = function(options = {}) {
     const fontSizeVariants = variants('fontSize', defaultFontSizeVariants)
     const fontFeaturesTheme = theme('interFontFeatures', defaultFontFeaturesTheme)
     const fontFeatures = defaults(fontFeaturesTheme, defaultFontFeaturesTheme)
+    const fontFeaturesVariants = variants('interFontFeatures', defaultFontSizeVariants)
     const baseStyles = {
-      ...(defaultConfig.importFontFace ? base : {}),
+      ...(config.importFontFace ? base : {}),
     }
 
     const fontSizeStyles = (fontSize, { a, b, c }, letterSpacing = 0) => {
       const [size, opts = {}] = isArrayLike(fontSize) ? fontSize : [fontSize]
-      const sizeInPx = toPx(size, defaultConfig.baseFontSize)
+      const sizeInPx = toPx(size, config.baseFontSize)
       const baseTracking = toPx(letterSpacing, sizeInPx)
       const trackingSize = baseTracking / sizeInPx + tracking(sizeInPx, a, b, c)
 
@@ -125,7 +127,7 @@ module.exports = function(options = {}) {
 
     const fontSizeUtilities = Object.entries(fontSizeTheme).reduce(
       (result, [sizeModifier, sizeValue]) => {
-        const { a, b, c } = defaultConfig
+        const { a, b, c } = config
 
         return {
           ...result,
@@ -161,9 +163,9 @@ module.exports = function(options = {}) {
     addUtilities(utilities)
 
     // Add .font-feature-{modifier} utility classes
-    addUtilities(fontFeatureUtilities)
+    addUtilities(fontFeatureUtilities, fontFeaturesVariants)
 
     // Add .font-inter.text-{size} utility classes
     addUtilities(fontSizeUtilities, fontSizeVariants)
   }
-}
+})

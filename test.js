@@ -55,7 +55,7 @@ function generateCss(type, overrides) {
   const config = {
     theme: { fontSize, letterSpacing },
     corePlugins: false,
-    plugins: [plugin()],
+    plugins: [plugin],
   }
 
   return postcss(tailwindcss(merge(config, overrides)))
