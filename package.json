@@ -1,7 +1,7 @@
 {
   "name": "tailwindcss-font-inter",
   "description": "TailwindCSS plugin for pleasant Inter Typeface integration",
-  "version": "2.0.5",
+  "version": "3.0.0",
   "license": "MIT",
   "main": "src/index.js",
   "author": "Yuri Sementsov <hello@smcv.dev>",
