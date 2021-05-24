@@ -34,6 +34,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+          registry-url: https://registry.npmjs.org/
 
       - name: Cache node_modules
         id: cache-modules
@@ -82,6 +83,6 @@ jobs:
 
       - name: 'Publish to NPM'
         if: github.event.inputs.dry_run != 'true'
-        run: npm publish
+        run: npm publish --access public
         env:
           NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}

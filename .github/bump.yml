@@ -25,6 +25,8 @@ release:
       new-prefix: ''
     - replace-prefix: 'deps: '
       new-prefix: ''
+    - replace-prefix: 'build(deps): '
+      new-prefix: ''
     - replace-prefix: 'build: '
       new-prefix: ''
 branch:
@@ -71,6 +73,7 @@ categories:
     skip-label: 'Development'
     commits:
       - 'deps:'
+      - 'build(deps):'
     changes-prefix: ':green_book: '
 bump:
   default: 'patch'
