@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/semencov/tailwindcss-font-inter",
   "peerDependencies": {
-    "tailwindcss": "^2.0.0"
+    "tailwindcss": "^2.0.0 || ^3.0.0"
   },
   "devDependencies": {
     "cssjson": "^2.1.3",
