@@ -2,7 +2,7 @@
 
 TailwindCSS Plugin to integrate with Inter Typeface from Rasmus Andersson [@rsms](https://twitter.com/rsms). It adds `.font-inter` class to apply Inter font family, adjusts letter spacing for each font size according to the [Dynamic Metrics](https://rsms.me/inter/dynmetrics/) and allows to toggle font feature settings. Optionally adds `@font-face` from [https://rsms.me/inter/inter.css](https://rsms.me/inter/inter.css).
 
-The plugin is inspired with [tailwind-plugin-inter-font](https://github.com/suburbicode/tailwind-plugin-font-inter) plugin developed by Imam Susanto [@imsus](https://github.com/imsus).
+The plugin is inspired with [tailwind-plugin-inter-font](https://github.com/imsus/tailwind-plugin-font-inter) plugin developed by Imam Susanto [@imsus](https://github.com/imsus).
 
 :warning: **This plugin produces pretty large amount of utility classes! It is highly recommended to use it in JIT-mode or with `purge` option.**
 
@@ -43,16 +43,15 @@ You can set additional options for plugin:
 ```js
 // tailwind.config.js
 module.exports = {
-  ...
-
+  /* ... */
   plugins: [
-  require('tailwindcss-font-inter')({ // default settings
-    a: -0.0223,
-    b: 0.185,
-    c: -0.1745,
-    baseFontSize: 16,
-    importFontFace: true,
-  })
+    require('tailwindcss-font-inter')({ // default settings
+      a: -0.0223,
+      b: 0.185,
+      c: -0.1745,
+      baseFontSize: 16,
+      importFontFace: true,
+    })
   ]
 }
 ```
