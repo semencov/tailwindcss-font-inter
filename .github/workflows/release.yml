@@ -4,20 +4,20 @@ on:
   workflow_dispatch:
     inputs:
       bump:
-        description: 'bump type, major or minor or patch or empty string'
-        default: ''
+        description: "bump type, major or minor or patch or empty string"
+        default: ""
         required: false
       dry_run:
-        description: 'dry run, true or false'
-        default: 'false'
+        description: "dry run, true or false"
+        default: "false"
         required: true
       draft:
-        description: 'draft, true or false'
-        default: 'false'
+        description: "draft, true or false"
+        default: "false"
         required: true
       pre_release:
-        description: 'pre release, true or false'
-        default: 'false'
+        description: "pre release, true or false"
+        default: "false"
         required: true
 
 jobs:
@@ -74,14 +74,14 @@ jobs:
 
       - uses: MeilCli/bump-release-action@v1
         with:
-          config_path: '.github/bump.yml'
+          config_path: ".github/bump.yml"
           bump: ${{ github.event.inputs.bump }}
           dry_run: ${{ github.event.inputs.dry_run }}
           draft: ${{ github.event.inputs.draft }}
           pre_release: ${{ github.event.inputs.pre_release }}
 
-      - name: 'Publish to NPM'
+      - name: "Publish to NPM"
         if: github.event.inputs.dry_run != 'true'
-        run: npm publish
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_AUTH_TOKEN }}
