@@ -54,6 +54,12 @@ expect.extend({
 function generateCss(type, overrides) {
   const config = {
     theme: { fontSize, letterSpacing },
+    safelist: [
+      'font-inter',
+      {
+        pattern: /font-feature-(normal|default|numeric|case)/,
+      },
+    ],
     corePlugins: false,
     plugins: [plugin],
   }
