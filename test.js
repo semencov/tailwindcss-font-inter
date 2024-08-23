@@ -1,106 +1,105 @@
 /* global: document */
 
-const merge = require('lodash/merge')
-const postcss = require('postcss')
-const tailwindcss = require('tailwindcss')
-const plugin = require('./src/index.js')
+const merge = require("lodash/merge");
+const postcss = require("postcss");
+const tailwindcss = require("tailwindcss");
+const plugin = require("./src/index.js");
 
-const Inter = require('./inter.json')
+const Inter = require("./inter.json");
 
 const fontSize = {
-  xs: ['0.75rem', { lineHeight: '1rem' }],
-  sm: ['0.875em', { lineHeight: '1.25em' }],
-  base: ['16px', { lineHeight: '24px' }],
-  lg: ['1.125rem', { lineHeight: '175%' }],
-  xl: ['1.25in', { lineHeight: '1.75' }],
-  '2xl': ['15ch', { lineHeight: '2rem' }],
-  '3xl': ['187%', { lineHeight: '2.25em' }],
-  '4xl': ['2.25cm', { lineHeight: '2.5rem' }],
-  '5xl': ['3ex', { lineHeight: '1' }],
-  '6xl': ['3.75rem', { lineHeight: '1' }],
-  '7xl': ['4.5rem', { lineHeight: '1' }],
-  '8xl': ['6pt', { lineHeight: '1' }],
-  '9xl': ['8mm', { lineHeight: '1' }],
-  '10xl': '32px',
-}
+	xs: ["0.75rem", { lineHeight: "1rem" }],
+	sm: ["0.875em", { lineHeight: "1.25em" }],
+	base: ["16px", { lineHeight: "24px" }],
+	lg: ["1.125rem", { lineHeight: "175%" }],
+	xl: ["1.25in", { lineHeight: "1.75" }],
+	"2xl": ["15ch", { lineHeight: "2rem" }],
+	"3xl": ["187%", { lineHeight: "2.25em" }],
+	"4xl": ["2.25cm", { lineHeight: "2.5rem" }],
+	"5xl": ["3ex", { lineHeight: "1" }],
+	"6xl": ["3.75rem", { lineHeight: "1" }],
+	"7xl": ["4.5rem", { lineHeight: "1" }],
+	"8xl": ["6pt", { lineHeight: "1" }],
+	"9xl": ["8mm", { lineHeight: "1" }],
+	"10xl": "32px",
+};
 
 const letterSpacing = {
-  tighter: '-0.05em',
-  tight: '-0.025ch',
-  normal: '0em',
-  wide: '0.025ex',
-  wider: '0.05cm',
-  widest: '0.1in',
-}
+	tighter: "-0.05em",
+	tight: "-0.025ch",
+	normal: "0em",
+	wide: "0.025ex",
+	wider: "0.05cm",
+	widest: "0.1in",
+};
 
 expect.extend({
-  toMatchCss(received, argument) {
-    const stripped = str => str.replace(/[;\s]/g, '')
+	toMatchCss(received, argument) {
+		const stripped = (str) => str.replace(/[;\s]/g, "");
 
-    if (stripped(received).includes(stripped(argument))) {
-      return {
-        message: () => `expected\n${received} not to match CSS ${argument}`,
-        pass: true,
-      }
-    } else {
-      return {
-        message: () => `expected\n${received} to match CSS ${argument}`,
-        pass: false,
-      }
-    }
-  },
-})
+		if (stripped(received).includes(stripped(argument))) {
+			return {
+				message: () => `expected\n${received} not to match CSS ${argument}`,
+				pass: true,
+			};
+		}
+		return {
+			message: () => `expected\n${received} to match CSS ${argument}`,
+			pass: false,
+		};
+	},
+});
 
 function generateCss(type, overrides) {
-  const config = {
-    theme: { fontSize, letterSpacing },
-    safelist: [
-      'font-inter',
-      {
-        pattern: /font-feature-(normal|default|numeric|case)/,
-      },
-    ],
-    corePlugins: false,
-    plugins: [plugin],
-  }
+	const config = {
+		theme: { fontSize, letterSpacing },
+		safelist: [
+			"font-inter",
+			{
+				pattern: /font-feature-(normal|default|numeric|case)/,
+			},
+		],
+		corePlugins: false,
+		plugins: [plugin],
+	};
 
-  return postcss(tailwindcss(merge(config, overrides)))
-    .process(`@tailwind ${type};`, {
-      from: undefined,
-    })
-    .then(({ css }) => css)
+	return postcss(tailwindcss(merge(config, overrides)))
+		.process(`@tailwind ${type};`, {
+			from: undefined,
+		})
+		.then(({ css }) => css);
 }
 
-test('it injects @font-face declaration', () => {
-  const { base } = Inter
+test("it injects @font-face declaration", () => {
+	const { base } = Inter;
 
-  const output = Object.entries(base)
-    .map(([selector, properties]) =>
-      properties
-        .map(prop => {
-          const body = Object.entries(prop).reduce(
-            (rules, [property, value]) => rules + `${property}: ${value};`,
-            ''
-          )
+	const output = Object.entries(base)
+		.map(([selector, properties]) =>
+			properties
+				.map((prop) => {
+					const body = Object.entries(prop).reduce(
+						(rules, [property, value]) => `${rules}${property}: ${value};`,
+						"",
+					);
 
-          return `
+					return `
               ${selector} {
                 ${body}
               }
-            `
-        })
-        .join('')
-    )
-    .join('')
+            `;
+				})
+				.join(""),
+		)
+		.join("");
 
-  return generateCss('base').then(css => {
-    expect(css).toMatchCss(output)
-  })
-})
+	return generateCss("base").then((css) => {
+		expect(css).toMatchCss(output);
+	});
+});
 
-test('it generates .font-inter class', () => {
-  return generateCss('utilities').then(css => {
-    expect(css).toMatchCss(`
+test("it generates .font-inter class", () => {
+	return generateCss("utilities").then((css) => {
+		expect(css).toMatchCss(`
       .font-inter {
           font-family: 'Inter', system-ui, sans-serif
       }
@@ -109,36 +108,36 @@ test('it generates .font-inter class', () => {
               font-family: 'Inter var', system-ui, sans-serif
           }
       }
-    `)
-  })
-})
+    `);
+	});
+});
 
-test('it generates default font feature classes', () => {
-  return generateCss('utilities').then(css => {
-    expect(css).toMatchCss(`
+test("it generates default font feature classes", () => {
+	return generateCss("utilities").then((css) => {
+		expect(css).toMatchCss(`
       .font-inter .font-feature-normal, .font-inter.font-feature-normal {
         font-feature-settings: normal
       }
-    `)
-    expect(css).toMatchCss(`
+    `);
+		expect(css).toMatchCss(`
       .font-inter .font-feature-default,.font-inter.font-feature-default {
         font-feature-settings: "calt" 1, "kern" 1
       }
-    `)
-  })
-})
+    `);
+	});
+});
 
-test('it generates custom font feature classes', () => {
-  const options = {
-    theme: {
-      interFontFeatures: {
-        numeric: ['tnum', 'salt', 'ss02'],
-        case: { case: true },
-      },
-    },
-  }
-  return generateCss('utilities', options).then(css => {
-    expect(css).toMatchCss(`
+test("it generates custom font feature classes", () => {
+	const options = {
+		theme: {
+			interFontFeatures: {
+				numeric: ["tnum", "salt", "ss02"],
+				case: { case: true },
+			},
+		},
+	};
+	return generateCss("utilities", options).then((css) => {
+		expect(css).toMatchCss(`
       .font-inter .font-feature-normal, .font-inter.font-feature-normal {
         font-feature-settings: normal
       }
@@ -154,28 +153,28 @@ test('it generates custom font feature classes', () => {
       .font-inter .font-feature-default,.font-inter.font-feature-default {
         font-feature-settings: "calt" 1, "kern" 1
       }
-    `)
-  })
-})
+    `);
+	});
+});
 
-test('it generates default font feature classes', () => {
-  return generateCss('utilities').then(css => {
-    expect(css).toMatchCss(`
+test("it generates default font feature classes", () => {
+	return generateCss("utilities").then((css) => {
+		expect(css).toMatchCss(`
       .font-inter .font-feature-normal, .font-inter.font-feature-normal {
         font-feature-settings: normal
       }
-    `)
-    expect(css).toMatchCss(`
+    `);
+		expect(css).toMatchCss(`
       .font-inter .font-feature-default,.font-inter.font-feature-default {
         font-feature-settings: "calt" 1, "kern" 1
       }
-    `)
-  })
-})
+    `);
+	});
+});
 
-test('it generates classes for font-size = 0.75rem and line-height = 1rem', () => {
-  return generateCss('utilities').then(css => {
-    expect(css).toMatchCss(`
+test("it generates classes for font-size = 0.75rem and line-height = 1rem", () => {
+	return generateCss("utilities").then((css) => {
+		expect(css).toMatchCss(`
       .font-inter .text-xs, .font-inter.text-xs {
         line-height: 1rem;
         font-size: 0.75rem;
@@ -211,13 +210,13 @@ test('it generates classes for font-size = 0.75rem and line-height = 1rem', () =
         font-size: 0.75rem;
         letter-spacing: 0.800490774em
       }
-    `)
-  })
-})
+    `);
+	});
+});
 
-test('it generates classes for font-size = 0.875em and line-height = 1.25em', () => {
-  return generateCss('utilities').then(css => {
-    expect(css).toMatchCss(`
+test("it generates classes for font-size = 0.875em and line-height = 1.25em", () => {
+	return generateCss("utilities").then((css) => {
+		expect(css).toMatchCss(`
       .font-inter .text-sm, .font-inter.text-sm {
         line-height: 1.25em;
         font-size: 0.875em;
@@ -253,13 +252,13 @@ test('it generates classes for font-size = 0.875em and line-height = 1.25em', ()
         font-size: 0.875em;
         letter-spacing: 0.679490741em
       }
-    `)
-  })
-})
+    `);
+	});
+});
 
-test('it generates classes for font-size = 16px and line-height = 24px', () => {
-  return generateCss('utilities').then(css => {
-    expect(css).toMatchCss(`
+test("it generates classes for font-size = 16px and line-height = 24px", () => {
+	return generateCss("utilities").then((css) => {
+		expect(css).toMatchCss(`
       .font-inter .text-base, .font-inter.text-base {
         line-height: 24px;
         font-size: 16px;
@@ -295,13 +294,13 @@ test('it generates classes for font-size = 16px and line-height = 24px', () => {
         font-size: 16px;
         letter-spacing: 0.589040221em
       }
-    `)
-  })
-})
+    `);
+	});
+});
 
-test('it generates classes for font-size = 1.125rem and line-height = 175%', () => {
-  return generateCss('utilities').then(css => {
-    expect(css).toMatchCss(`
+test("it generates classes for font-size = 1.125rem and line-height = 175%", () => {
+	return generateCss("utilities").then((css) => {
+		expect(css).toMatchCss(`
       .font-inter .text-lg, .font-inter.text-lg {
         line-height: 175%;
         font-size: 1.125rem;
@@ -337,13 +336,13 @@ test('it generates classes for font-size = 1.125rem and line-height = 175%', () 
         font-size: 1.125rem;
         letter-spacing: 0.519032648em
       }
-    `)
-  })
-})
+    `);
+	});
+});
 
-test('it generates classes for font-size = 1.25in and line-height = 1.75', () => {
-  return generateCss('utilities').then(css => {
-    expect(css).toMatchCss(`
+test("it generates classes for font-size = 1.25in and line-height = 1.75", () => {
+	return generateCss("utilities").then((css) => {
+		expect(css).toMatchCss(`
       .font-inter .text-xl, .font-inter.text-xl {
         line-height: 1.75;
         font-size: 1.25in;
@@ -379,13 +378,13 @@ test('it generates classes for font-size = 1.25in and line-height = 1.75', () =>
         font-size: 1.25in;
         letter-spacing: 0.0577em
       }
-    `)
-  })
-})
+    `);
+	});
+});
 
-test('it generates classes for font-size = 15ch and line-height = 2rem', () => {
-  return generateCss('utilities').then(css => {
-    expect(css).toMatchCss(`
+test("it generates classes for font-size = 15ch and line-height = 2rem", () => {
+	return generateCss("utilities").then((css) => {
+		expect(css).toMatchCss(`
       .font-inter .text-2xl, .font-inter.text-2xl {
         line-height: 2rem;
         font-size: 15ch;
@@ -421,13 +420,13 @@ test('it generates classes for font-size = 15ch and line-height = 2rem', () => {
         font-size: 15ch;
         letter-spacing: 0.0577em
       }
-    `)
-  })
-})
+    `);
+	});
+});
 
-test('it generates classes for font-size = 187% and line-height = 2.25em', () => {
-  return generateCss('utilities').then(css => {
-    expect(css).toMatchCss(`
+test("it generates classes for font-size = 187% and line-height = 2.25em", () => {
+	return generateCss("utilities").then((css) => {
+		expect(css).toMatchCss(`
       .font-inter .text-3xl, .font-inter.text-3xl {
         line-height: 2.25em;
         font-size: 187%;
@@ -463,13 +462,13 @@ test('it generates classes for font-size = 187% and line-height = 2.25em', () =>
         font-size: 187%;
         letter-spacing: 0.299554931em
       }
-    `)
-  })
-})
+    `);
+	});
+});
 
-test('it generates classes for font-size = 2.25cm and line-height = 2.5rem', () => {
-  return generateCss('utilities').then(css => {
-    expect(css).toMatchCss(`
+test("it generates classes for font-size = 2.25cm and line-height = 2.5rem", () => {
+	return generateCss("utilities").then((css) => {
+		expect(css).toMatchCss(`
       .font-inter .text-4xl, .font-inter.text-4xl {
         line-height: 2.5rem;
         font-size: 2.25cm;
@@ -505,13 +504,13 @@ test('it generates classes for font-size = 2.25cm and line-height = 2.5rem', () 
         font-size: 2.25cm;
         letter-spacing: 0.090588955em
       }
-    `)
-  })
-})
+    `);
+	});
+});
 
-test('it generates classes for font-size = 6pt and line-height = 1', () => {
-  return generateCss('utilities').then(css => {
-    expect(css).toMatchCss(`
+test("it generates classes for font-size = 6pt and line-height = 1", () => {
+	return generateCss("utilities").then((css) => {
+		expect(css).toMatchCss(`
       .font-inter .text-8xl, .font-inter.text-8xl {
         line-height: 1;
         font-size: 6pt;
@@ -547,12 +546,12 @@ test('it generates classes for font-size = 6pt and line-height = 1', () => {
         font-size: 6pt;
         letter-spacing: 1.223503286em
       }
-    `)
-  })
-})
-test('it generates classes for font-size = 32px and no line-height', () => {
-  return generateCss('utilities').then(css => {
-    expect(css).toMatchCss(`
+    `);
+	});
+});
+test("it generates classes for font-size = 32px and no line-height", () => {
+	return generateCss("utilities").then((css) => {
+		expect(css).toMatchCss(`
       .font-inter .text-10xl, .font-inter.text-10xl {
         font-size: 32px;
         letter-spacing: -0.021604862em
@@ -581,6 +580,6 @@ test('it generates classes for font-size = 32px and no line-height', () => {
         font-size: 32px;
         letter-spacing: 0.278395138em
       }
-    `)
-  })
-})
+    `);
+	});
+});
