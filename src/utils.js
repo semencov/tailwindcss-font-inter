@@ -1,46 +1,59 @@
-const parseUnit = require("parse-unit");
+function isBoolean(val) {
+  return typeof val === "boolean";
+}
 
-const PPI = 96;
+function isString(val) {
+  return typeof val === "string";
+}
 
-const defaultUnitsRatio = (base) => ({
-	ch: 8,
-	ex: 7.15625,
-	em: base,
-	rem: base,
-	in: PPI,
-	cm: PPI / 2.54,
-	mm: PPI / 25.4,
-	pt: PPI / 72,
-	pc: PPI / 6,
-	px: 1,
-});
+function isNumeric(val) {
+  return !Number.isNaN(val) && !Number.isNaN(Number.parseFloat(val));
+}
 
-const isNumeric = (val) =>
-	!Number.isNaN(val) && !Number.isNaN(Number.parseFloat(val));
+function isArrayLike(obj) {
+  return obj &&
+    obj !== null &&
+    !isString(obj) &&
+    typeof obj[Symbol.iterator] === "function";
+}
 
-const toPx = (str, baseSize) => {
-	if (!str && str !== 0) return null;
-	const ratio = defaultUnitsRatio(baseSize);
-	if (ratio[str]) return ratio[str];
+function isPlainObject(val) {
+  return !!val && typeof val === "object" && val.constructor === Object;
+}
 
-	// detect number of units
-	const parts = parseUnit(str);
+function mapObject(obj, cb) {
+  return Object.fromEntries(
+    (Array.isArray(obj) ? obj : Object.entries(obj)).map((val) => cb(...val))
+  );
+}
 
-	if (isNumeric(parts[0])) {
-		if (parts[1]) {
-			if (parts[1] === "%") {
-				return (Number.parseFloat(parts[0]) / 100) * baseSize;
-			}
+function filterObject(obj, cb) {
+  return Object.fromEntries(
+    (Array.isArray(obj) ? obj : Object.entries(obj)).filter((val) => cb(...val))
+  );
+}
 
-			const px = toPx(parts[1], baseSize);
-			return typeof px === "number" ? parts[0] * px : null;
-		}
-		return parts[0];
-	}
+function defaults(obj, ...defs) {
+  return Object.assign({}, obj, ...defs.reverse(), obj);
+}
 
-	return null;
-};
+function unquote(str) {
+  return str.replace(/^['"]|['"]$/g, "").trim();
+}
+
+function toKebabCase(str) {
+  return str.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+}
 
 module.exports = {
-	toPx,
+  isBoolean,
+	isString,
+	isNumeric,
+	isArrayLike,
+	isPlainObject,
+	mapObject,
+	filterObject,
+	defaults,
+	unquote,
+  toKebabCase,
 };

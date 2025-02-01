@@ -4,7 +4,6 @@ const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 const { mkdirSync, rmSync } = require("node:fs");
 const { writeFile } = require("node:fs/promises");
-const { parse } = require("node:url");
 const fontkit = require("fontkit");
 const fetch = require("node-fetch");
 const postcss = require("postcss");
@@ -16,6 +15,7 @@ const interUrl = "https://rsms.me/inter/";
 const interSource = `${interUrl}inter.css`;
 const interFamilies = new Set();
 const interFiles = new Set();
+const interFontFaces = new Set();
 const inter = {
 	version: null,
 	availableFeatures: new Set(),
@@ -24,11 +24,11 @@ const inter = {
 	},
 	utilities: {
 		".font-inter": {
-			"font-family": "'Inter', system-ui, sans-serif",
+			"font-family": "Inter, sans-serif",
 		},
 		"@supports(font-variation-settings: normal)": {
 			".font-inter": {
-				"font-family": "'Inter var', system-ui, sans-serif",
+				"font-family": "InterVariable, sans-serif",
 			},
 		},
 	},
@@ -69,23 +69,9 @@ const extractCss = (root) => {
 			declarations[name] = value;
 		});
 
-		if (declarations["font-family"].match(/\salt\b/)) {
-			console.log(
-				"Excluding declaration for font",
-				declarations["font-family"],
-			);
-			return;
-		}
-
-		if (declarations["font-family"].match(/\sexperimental\b/)) {
-			console.log(
-				"Excluding declaration for font",
-				declarations["font-family"],
-			);
-			return;
-		}
-
-		inter.base[`@${rule.name}`].push(declarations);
+    if (rule.name === 'font-face' && ['Inter', 'InterVariable'].includes(declarations['font-family'])) {
+      interFontFaces.add(declarations);
+    }
 	});
 
 	console.log("Found font families:", [...interFamilies].join(", "));
@@ -95,7 +81,7 @@ const download = (fileUrl, initialFile = null) => {
 	let file = initialFile;
 
 	if (!file) {
-		const parsed = parse(fileUrl);
+		const parsed = new URL(fileUrl);
 		const fileName = path.basename(parsed.pathname);
 		file = path.join(TEMP, fileName);
 	}
@@ -130,6 +116,7 @@ fetch(interSource)
 		}
 
 		inter.availableFeatures = [...inter.availableFeatures].sort();
+    inter.base['@font-face'] = [...interFontFaces];
 
 		console.log("Font version:", inter.version);
 		console.log("Found font features:", inter.availableFeatures.join(", "));
