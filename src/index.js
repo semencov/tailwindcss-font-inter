@@ -1,34 +1,17 @@
 const plugin = require("tailwindcss/plugin");
-const { toPx } = require("./utils");
 const Inter = require("../inter.json");
+const {
+	unquote,
+	defaults,
+	isString,
+	isBoolean,
+	isArrayLike,
+	isPlainObject,
+	mapObject,
+	filterObject
+} = require("./utils");
 
-const isBoolean = (val) => typeof val === "boolean";
-const isString = (val) => typeof val === "string";
-const isArrayLike = (obj) =>
-	obj &&
-	obj !== null &&
-	!isString(obj) &&
-	typeof obj[Symbol.iterator] === "function";
-const isPlainObject = (val) =>
-	!!val && typeof val === "object" && val.constructor === Object;
-const mapObject = (obj, cb) =>
-	Object.fromEntries(
-		(Array.isArray(obj) ? obj : Object.entries(obj)).map((val) => cb(...val)),
-	);
-const filterObject = (obj, cb) =>
-	Object.fromEntries(
-		(Array.isArray(obj) ? obj : Object.entries(obj)).filter((val) =>
-			cb(...val),
-		),
-	);
-const defaults = (obj, ...defs) =>
-	Object.assign({}, obj, ...defs.reverse(), obj);
-const round = (num, prec = 3) => Number.parseFloat(num.toFixed(prec));
-const unquote = (str) => str.replace(/^['"]|['"]$/g, "").trim();
-
-const tracking = (fontSize, a, b, c) => a + b * Math.E ** (c * fontSize);
-
-const normalizeEntry = (key, value) => {
+function normalizeEntry(key, value) {
 	let normalizedValue = isBoolean(value) ? `${1 * value}` : `${value}`;
 	normalizedValue =
 		normalizedValue !== "1" && normalizedValue !== "undefined"
@@ -36,8 +19,9 @@ const normalizeEntry = (key, value) => {
 			: "1";
 
 	return [unquote(key), normalizedValue];
-};
-const generateFeatures = (inputFeatures, available) => {
+}
+
+function generateFeatures(inputFeatures, available) {
 	let features;
 
 	if (isPlainObject(inputFeatures)) {
@@ -77,14 +61,10 @@ const generateFeatures = (inputFeatures, available) => {
 		.sort()
 		.join(", ")
 		.trim();
-};
+}
 
 module.exports = plugin.withOptions((options = {}) => {
 	const config = defaults(options, {
-		a: -0.0223,
-		b: 0.185,
-		c: -0.1745,
-		baseFontSize: 16,
 		importFontFace: true,
 	});
 
@@ -95,32 +75,18 @@ module.exports = plugin.withOptions((options = {}) => {
 		const defaultFontSizeVariants = ["responsive"];
 
 		const fontSizeTheme = theme("fontSize");
-		const letterSpacingTheme = theme("letterSpacing");
 		const fontSizeVariants = variants("fontSize", defaultFontSizeVariants);
-		const fontFeaturesTheme = theme(
-			"interFontFeatures",
-			defaultFontFeaturesTheme,
-		);
+		const fontFeaturesTheme = theme("interFontFeatures", defaultFontFeaturesTheme);
 		const fontFeatures = defaults(fontFeaturesTheme, defaultFontFeaturesTheme);
-		const fontFeaturesVariants = variants(
-			"interFontFeatures",
-			defaultFontSizeVariants,
-		);
-		const baseStyles = {
-			...(config.importFontFace ? base : {}),
-		};
+		const fontFeaturesVariants = variants("interFontFeatures", defaultFontSizeVariants);
+		const baseStyles = { ...(config.importFontFace ? base : {}) };
 
-		const fontSizeStyles = (fontSize, { a, b, c }, letterSpacing = 0) => {
+		const fontSizeStyles = (fontSize) => {
 			const [size, opts = {}] = isArrayLike(fontSize) ? fontSize : [fontSize];
-			const sizeInPx = toPx(size, config.baseFontSize);
-			const baseTracking = toPx(letterSpacing, sizeInPx);
-			const trackingSize =
-				baseTracking / sizeInPx + tracking(sizeInPx, a, b, c);
 
 			return {
 				...opts,
 				fontSize: size,
-				letterSpacing: `${round(trackingSize, 9)}em`,
 			};
 		};
 
@@ -144,9 +110,7 @@ module.exports = plugin.withOptions((options = {}) => {
 				const features = generateFeatures(value, availableFeatures);
 
 				return [
-					`.font-inter .${e(`font-feature-${modifier}`)},.font-inter.${e(
-						`font-feature-${modifier}`,
-					)}`,
+					`.font-inter .${e(`font-feature-${modifier}`)},.font-inter.${e(`font-feature-${modifier}`)}`,
 					{
 						...fontFeatureStyles(features),
 					},
@@ -165,19 +129,6 @@ module.exports = plugin.withOptions((options = {}) => {
 							...fontSizeStyles(sizeValue, { a, b, c }),
 						},
 					],
-					...Object.entries(letterSpacingTheme).map(
-						([spacingModifier, spacingValue]) => [
-							`.font-inter .${e(`text-${sizeModifier}`)} .${e(`tracking-${spacingModifier}`)}, ` +
-								`.font-inter .${e(`text-${sizeModifier}`)}.${e(`tracking-${spacingModifier}`)}, ` +
-								`.font-inter.${e(`text-${sizeModifier}`)} .${e(`tracking-${spacingModifier}`)}, ` +
-								`.font-inter.${e(`text-${sizeModifier}`)}.${e(`tracking-${spacingModifier}`)}, ` +
-								`.${e(`tracking-${spacingModifier}`)} .font-inter .${e(`text-${sizeModifier}`)}, ` +
-								`.${e(`tracking-${spacingModifier}`)} .font-inter.${e(`text-${sizeModifier}`)}`,
-							{
-								...fontSizeStyles(sizeValue, { a, b, c }, spacingValue),
-							},
-						],
-					),
 				];
 
 				return Object.assign(result, Object.fromEntries(entries));
