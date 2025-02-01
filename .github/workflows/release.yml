@@ -25,13 +25,13 @@ jobs:
     name: Release & Publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Cache node_modules
         id: cache-modules
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: 18.x-${{ runner.OS }}-build-${{ hashFiles('package.json') }}
